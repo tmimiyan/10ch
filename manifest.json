@@ -1,0 +1,14 @@
+{
+  "name":"10ちゃんねる",
+  "short_name":"10ch",
+  "icons": [{
+      "src": "apple-touch-icon.png",
+      "sizes":"180x180",
+      "type": "image/png"
+    }
+   ],
+  "start_url": "index.html",
+  "display": "browser",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF"
+}
