@@ -4,12 +4,12 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-aut
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyA41mpWT_KWOlC8V2JiR_pf2gJT063sK1k",
+  authDomain: "openbbs-31b16.firebaseapp.com",
+  projectId: "openbbs-31b16",
+  storageBucket: "openbbs-31b16.firebasestorage.app",
+  messagingSenderId: "176143277737",
+  appId: "1:176143277737:web:b4018284d84b19d8b9d3b8"
 };
 
 // Keep the placeholder check explicit so a deployment error is easy to understand.
