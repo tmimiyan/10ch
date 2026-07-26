@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="OpenBBS のスレッド">
+    <meta name="theme-color" content="#2563eb">
+    <title>スレッド | OpenBBS</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html">OpenBBS</a>
+      <nav class="header-actions" aria-label="ヘッダーメニュー">
+        <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
+        <a class="button button-primary login-link" href="./login.html">ログイン</a>
+        <button class="button button-ghost logout-button" type="button" hidden>ログアウト</button>
+      </nav>
+    </header>
+    <main class="container thread-page">
+      <a class="back-link" href="./index.html">← スレッド一覧へ</a>
+      <section id="thread-detail" class="thread-detail panel" aria-live="polite"></section>
+      <section class="reply-section" aria-labelledby="replies-heading">
+        <div class="section-heading"><h2 id="replies-heading">レス</h2><p id="reply-count" class="muted"></p></div>
+        <div id="reply-list" class="reply-list" aria-live="polite"></div>
+      </section>
+      <section class="panel" aria-labelledby="reply-form-heading">
+        <h2 id="reply-form-heading">レスを投稿</h2>
+        <p id="login-notice" class="muted">投稿にはログインが必要です。</p>
+        <form id="reply-form" class="stack-form">
+          <label for="reply-body">内容</label>
+          <textarea id="reply-body" name="body" maxlength="2000" rows="5" required placeholder="思いやりをもって投稿しましょう"></textarea>
+          <button id="reply-button" class="button button-primary" type="submit">投稿する</button>
+        </form>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./js/thread.js"></script>
+  </body>
+</html>

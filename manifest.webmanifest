@@ -1,0 +1,10 @@
+{
+  "name": "OpenBBS",
+  "short_name": "OpenBBS",
+  "description": "Firebase で動作するシンプルな掲示板",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "lang": "ja"
+}
