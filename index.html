@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OpenBBS</title>
+
+    <meta name="description" content="GitHub Pages対応掲示板">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <script type="module" src="assets/js/common.js" defer></script>
+    <script type="module" src="assets/js/board.js" defer></script>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+
+        <h1>OpenBBS</h1>
+
+        <span class="subtitle">
+            GitHub Pages Bulletin Board
+        </span>
+
+    </div>
+
+    <nav>
+
+        <a href="index.html">ホーム</a>
+
+        <a href="new.html">新規スレッド</a>
+
+        <button id="themeButton">
+            🌙
+        </button>
+
+    </nav>
+
+</header>
+
+<main>
+
+<section class="searchArea">
+
+    <input
+        id="searchBox"
+        type="text"
+        placeholder="スレッド検索">
+
+</section>
+
+<section class="notice">
+
+<h2>お知らせ</h2>
+
+<div id="noticeArea">
+
+現在お知らせはありません。
+
+</div>
+
+</section>
+
+<section class="board">
+
+<div class="boardHeader">
+
+<h2>スレッド一覧</h2>
+
+<span id="threadCount">
+
+0 Threads
+
+</span>
+
+</div>
+
+<div id="threadList">
+
+<div class="loading">
+
+読み込み中...
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div>
+
+OpenBBS
+
+Version 0.1.0
+
+</div>
+
+<div>
+
+Powered by GitHub Pages
+
+</div>
+
+</footer>
+
+</body>
+
+</html>
