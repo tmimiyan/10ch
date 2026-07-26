@@ -48,10 +48,12 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!currentUser) { showToast("スレッド作成にはログインが必要です。"); location.href = "./login.html"; return; }
   const data = new FormData(form); const title = data.get("title").trim(); const firstPost = data.get("body").trim();
+  // A signed-in account is required, but the visible name can be chosen for each post.
+  const authorName = data.get("authorName").trim() || "名無しさん";
   if (!title || !firstPost) return;
   createButton.disabled = true;
   try {
-    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName: displayName(currentUser), createdAt: serverTimestamp(), replyCount: 0 });
+    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName, createdAt: serverTimestamp(), replyCount: 0 });
     form.reset(); location.href = `./thread.html?id=${encodeURIComponent(doc.id)}`;
   } catch (error) { showToast(firebaseMessage(error)); createButton.disabled = false; }
 });
