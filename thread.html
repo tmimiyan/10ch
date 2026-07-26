@@ -3,13 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="OpenBBS のスレッド">
+    <meta name="description" content="10ちゃんねるのスレッド">
     <meta name="theme-color" content="#2563eb">
-    <title>スレッド | 10ch</title>
+    <title>10ちゃんねる</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="shortcut icon" href="favicone.ico">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
   </head>
   <body>
     <header class="site-header">
@@ -31,6 +29,8 @@
         <h2 id="reply-form-heading">レスを投稿</h2>
         <p id="login-notice" class="muted">投稿にはログインが必要です。</p>
         <form id="reply-form" class="stack-form">
+          <label for="reply-author">投稿者名 <span class="optional">（任意）</span></label>
+          <input id="reply-author" name="authorName" type="text" maxlength="24" autocomplete="nickname" placeholder="未入力の場合は名無しさん">
           <label for="reply-body">内容</label>
           <textarea id="reply-body" name="body" maxlength="2000" rows="5" required placeholder="思いやりをもって投稿しましょう"></textarea>
           <button id="reply-button" class="button button-primary" type="submit">投稿する</button>
