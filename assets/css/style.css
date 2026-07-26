@@ -440,3 +440,151 @@ nav{
 }
 
 }
+
+/* ===================================================== */
+/* Form */
+
+.formGroup{
+
+    display:flex;
+
+    flex-direction:column;
+
+    margin-bottom:18px;
+
+}
+
+.formGroup label{
+
+    margin-bottom:6px;
+
+    font-weight:bold;
+
+}
+
+.formGroup input,
+
+.formGroup textarea{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid var(--border);
+
+    border-radius:10px;
+
+    background:var(--surface2);
+
+    color:var(--text);
+
+    font-size:16px;
+
+}
+
+.formGroup textarea{
+
+    resize:vertical;
+
+    min-height:180px;
+
+    font-family:inherit;
+
+}
+
+#submitReply{
+
+    background:var(--primary);
+
+    color:white;
+
+    border:none;
+
+    padding:14px 24px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:.2s;
+
+}
+
+#submitReply:hover{
+
+    background:var(--primaryHover);
+
+}
+
+/* ===================================================== */
+/* Reply */
+
+.reply{
+
+    padding:16px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.reply:last-child{
+
+    border-bottom:none;
+
+}
+
+.replyHeader{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-bottom:10px;
+
+    font-size:14px;
+
+}
+
+.replyNumber{
+
+    color:var(--primary);
+
+    font-weight:bold;
+
+}
+
+.replyName{
+
+    color:#008000;
+
+    font-weight:bold;
+
+}
+
+.replyID{
+
+    color:var(--danger);
+
+}
+
+.replyBody{
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+
+    line-height:1.8;
+
+    font-family:
+
+        "Consolas",
+
+        "Courier New",
+
+        monospace;
+
+}
