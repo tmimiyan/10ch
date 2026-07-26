@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Keep the placeholder check explicit so a deployment error is easy to understand.
-export const isFirebaseConfigured = !Object.values(firebaseConfig).some((value) => value.includes("YOUR_"));
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
