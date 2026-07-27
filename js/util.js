@@ -1,5 +1,8 @@
 // Shared presentation helpers. User content is always inserted with textContent, never innerHTML.
 export const $ = (selector, root = document) => root.querySelector(selector);
+// This must match the administrator email checked by the Firebase security rules.
+export const ADMIN_EMAIL = "tomohiro6231@gmail.com";
+export const isAdmin = (user) => user?.email?.toLowerCase() === ADMIN_EMAIL;
 
 export function formatDate(timestamp) {
   if (!timestamp?.toDate) return "投稿日時を取得中";
