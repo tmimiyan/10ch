@@ -22,6 +22,8 @@ export function showToast(message) {
 export function firebaseMessage(error) {
   console.error(error);
   if (error?.code === "permission-denied") return "権限がありません。ログイン状態と Firestore ルールを確認してください。";
+  if (error?.code === "storage/unauthorized") return "画像を保存する権限がありません。Firebase Storage のルールを確認してください。";
+  if (error?.code === "storage/quota-exceeded") return "画像保存容量の上限に達しています。Firebase Storage の容量を確認してください。";
   if (error?.code === "unavailable") return "ネットワークに接続できません。接続を確認して再試行してください。";
   return "処理に失敗しました。もう一度お試しください。";
 }
