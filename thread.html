@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="10ちゃんねるのスレッド">
+    <meta name="description" content="10ちゃんねる のスレッド">
     <meta name="theme-color" content="#2563eb">
-    <title>10ちゃんねる</title>
-    <link rel="manifest" href="./manifest.json">
+    <title>スレッド | 10ちゃんねる</title>
+    <link rel="manifest" href="./manifest.webmanifest">
     <link rel="stylesheet" href="./css/style.css">
   </head>
   <body>
@@ -32,7 +32,9 @@
           <label for="reply-author">投稿者名 <span class="optional">（任意）</span></label>
           <input id="reply-author" name="authorName" type="text" maxlength="24" autocomplete="nickname" placeholder="未入力の場合は名無しさん">
           <label for="reply-body">内容</label>
-          <textarea id="reply-body" name="body" maxlength="2000" rows="5" required placeholder="思いやりをもって投稿しましょう"></textarea>
+          <textarea id="reply-body" name="body" maxlength="2000" rows="5" placeholder="思いやりをもって投稿しましょう（画像のみでも投稿できます）"></textarea>
+          <label for="reply-image">画像 <span class="optional">（任意・3枚まで、1枚5MBまで）</span></label>
+          <input id="reply-image" name="image" type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
           <button id="reply-button" class="button button-primary" type="submit">投稿する</button>
         </form>
       </section>
