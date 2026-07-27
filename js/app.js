@@ -2,6 +2,7 @@
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { auth, db, isFirebaseConfigured } from "./firebase.js";
+import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 
@@ -26,7 +27,7 @@ function renderThreads(threads) {
     const node = template.content.cloneNode(true); const link = $(".thread-card-link", node);
     link.href = `./thread.html?id=${encodeURIComponent(id)}`;
     $(".thread-title", node).textContent = thread.title;
-    $(".thread-preview", node).textContent = thread.firstPost || "";
+    $(".thread-preview", node).textContent = thread.firstPost || (thread.imageUrls?.length || thread.imageUrl ? "画像付きの投稿" : "");
     $(".thread-author", node).textContent = thread.authorName || "名無しさん";
     $(".thread-date", node).textContent = formatDate(thread.createdAt);
     $(".thread-replies", node).textContent = `レス ${thread.replyCount || 0}`;
@@ -48,14 +49,19 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!currentUser) { showToast("スレッド作成にはログインが必要です。"); location.href = "./login.html"; return; }
   const data = new FormData(form); const title = data.get("title").trim(); const firstPost = data.get("body").trim();
+  const imageFiles = [...$("#thread-image").files];
   // A signed-in account is required, but the visible name can be chosen for each post.
   const authorName = data.get("authorName").trim() || "名無しさん";
-  if (!title || !firstPost) return;
+  if (!title || (!firstPost && !imageFiles.length)) { showToast("本文または画像を入力してください。"); return; }
+  const imageError = validateImages(imageFiles);
+  if (imageError) { showToast(imageError); return; }
   createButton.disabled = true;
+  let images = [];
   try {
-    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName, createdAt: serverTimestamp(), replyCount: 0 });
+    images = await uploadPostImages(imageFiles, currentUser.uid);
+    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName, imageUrls: images.map((image) => image.url), imagePaths: images.map((image) => image.path), imageUrl: images[0]?.url || null, createdAt: serverTimestamp(), replyCount: 0 });
     form.reset(); location.href = `./thread.html?id=${encodeURIComponent(doc.id)}`;
-  } catch (error) { showToast(firebaseMessage(error)); createButton.disabled = false; }
+  } catch (error) { await removePostImages(images).catch(console.warn); showToast(firebaseMessage(error)); createButton.disabled = false; }
 });
 $("#search-form").addEventListener("submit", (event) => { event.preventDefault(); const keyword = $("#search-input").value; $("#clear-search").hidden = !keyword.trim(); loadThreads(keyword); });
 $("#clear-search").addEventListener("click", () => { $("#search-input").value = ""; $("#clear-search").hidden = true; loadThreads(); });
