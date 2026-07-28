@@ -5,6 +5,7 @@ import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
+import { getFirstLoginAt } from "./user.js";
 
 initTheme();
 const list = $("#thread-list"), form = $("#thread-form"), createButton = $("#create-thread-button");
@@ -12,6 +13,7 @@ let currentUser = null;
 
 function syncAuth(user) {
   currentUser = user;
+  if (user) getFirstLoginAt(user).catch(console.warn);
   $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user;
   createButton.disabled = !user;
   createButton.title = user ? "" : "ログイン後に作成できます";
