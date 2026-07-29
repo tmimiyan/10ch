@@ -7,7 +7,7 @@ const { getMessaging } = require("firebase-admin/messaging");
 initializeApp();
 const db = getFirestore();
 const app = express();
-const SITE_URL = process.env.SITE_URL || "https://YOUR_NAME.github.io/YOUR_REPOSITORY/";
+const SITE_URL = process.env.SITE_URL || "https://www.10-ch.net/";
 
 function threadUrl(threadId) {
   return `${SITE_URL.replace(/\/$/, "")}/thread.html?id=${encodeURIComponent(threadId)}`;
