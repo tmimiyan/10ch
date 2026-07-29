@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="10ちゃんねる へのログイン">
+    <meta name="theme-color" content="#2563eb">
+    <title>ログイン | 10ちゃんねる</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="favicone.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body class="auth-page">
+    <header class="site-header">
+      <a class="brand" href="./index.html">10ちゃんねる</a>
+      <div class="header-actions">
+        <button class="button button-ghost notification-button" type="button">通知を許可</button>
+        <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
+      </div>
+    </header>
+    <main class="auth-main">
+      <section class="auth-card" aria-labelledby="login-heading">
+        <p class="eyebrow">WELCOME</p>
+        <h1 id="login-heading">10ちゃんねる にログイン</h1>
+        <p class="muted">Google アカウントでログインすると、スレッド作成とレス投稿ができます。</p>
+        <button id="google-login" class="button button-google" type="button"><span aria-hidden="true">G</span> Google でログイン</button>
+        <p id="auth-status" class="form-status" aria-live="polite"></p>
+        <a class="back-link" href="./index.html">← 掲示板へ戻る</a>
+      </section>
+    </main>
+    <script type="module" src="./js/auth.js"></script>
+  </body>
+</html>
