@@ -4,7 +4,7 @@
   "compatibility_date": "2026-07-30",
   "vars": {
     "FIREBASE_PROJECT_ID": "openbbs-31b16",
-    "SITE_URL": "https://tmimiyan.github.io/10ch",
-    "ALLOWED_ORIGIN": "https://tmimiyan.github.io"
+    "SITE_URL": "https://www.10-ch.net/",
+    "ALLOWED_ORIGIN": "https://www.10-ch.net"
   }
 }
