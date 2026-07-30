@@ -6,7 +6,7 @@ const ONESIGNAL_APP_ID = "71ca2f3d-df06-4b33-b3e9-5b9d1ef60e76";
 let oneSignal = null;
 
 function configured() {
-  return !ONESIGNAL_APP_ID.startsWith("71ca2f3d-df06-4b33-b3e9-5b9d1ef60e76");
+  return !ONESIGNAL_APP_ID.startsWith("YOUR_");
 }
 
 function setNotificationButtonLabel(label) {
