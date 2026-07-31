@@ -1,7 +1,7 @@
 {
   "name": "10ch-notifier",
   "main": "worker.js",
-  "compatibility_date": "2026-07-30",
+  "compatibility_date": "2026-07-31",
   "vars": {
     "FIREBASE_PROJECT_ID": "openbbs-31b16",
     "SITE_URL": "https://www.10-ch.net/",
