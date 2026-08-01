@@ -3,7 +3,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { collection, doc, getDoc, getDocs, increment, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
-import { $, displayName, firebaseMessage, formatDate, isAdmin, lockAuthorInputs, postAuthor, showToast } from "./util.js";
+import { $, displayName, firebaseMessage, formatDate, isAdmin, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 import { getFirstLoginAt } from "./user.js";
 import { initNotifications } from "./notifications-mobile.js";
@@ -18,9 +18,24 @@ let currentUser = null;
 let unsubscribeReplies = null;
 let currentThread = null;
 let latestReplies = null;
+const ADMIN_EMAIL = "tomohiro6231@gmail.com";
+const ADMIN_AUTHOR_NAME = "管理者";
+const ADMIN_AUTHOR_COLOR = "#c026d3";
+function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; }
+function postAuthor(user, name, color) {
+  return isAdminUser(user)
+    ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
+    : { name: name?.trim() || "名無しさん", color };
+}
+function lockAuthorInputs(user) {
+  const nameInput = $("#reply-author"), colorInput = $("#reply-author-color");
+  const locked = isAdminUser(user);
+  nameInput.disabled = locked; colorInput.disabled = locked;
+  if (locked) { nameInput.value = ADMIN_AUTHOR_NAME; colorInput.value = ADMIN_AUTHOR_COLOR; }
+}
 initNotifications(() => currentUser);
 
-function syncAuth(user) { currentUser = user; lockAuthorInputs(user, $("#reply-author"), $("#reply-author-color")); if (user) getFirstLoginAt(user).catch(console.warn); $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user; replyButton.disabled = !user; deleteThreadButton.hidden = !isAdmin(user); $("#login-notice").textContent = user ? `${displayName(user)} として投稿します。` : "投稿にはログインが必要です。"; if (latestReplies) renderReplies(latestReplies); }
+function syncAuth(user) { currentUser = user; lockAuthorInputs(user); if (user) getFirstLoginAt(user).catch(console.warn); $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user; replyButton.disabled = !user; deleteThreadButton.hidden = !isAdmin(user); $("#login-notice").textContent = user ? `${displayName(user)} として投稿します。` : "投稿にはログインが必要です。"; if (latestReplies) renderReplies(latestReplies); }
 onAuthStateChanged(auth, syncAuth); $(".logout-button").addEventListener("click", () => signOut(auth));
 function empty(message) { detail.innerHTML = `<p class="empty-state">${message}</p>`; }
 function authorNode(name, color) { const author = document.createElement("span"); author.textContent = name || "名無しさん"; if (/^#[0-9a-f]{6}$/i.test(color || "")) author.style.color = color; return author; }
@@ -46,7 +61,7 @@ async function loadThread() {
   } catch (error) { empty(firebaseMessage(error)); }
 }
 async function deleteThread() { if (!isAdmin(currentUser) || !id || !currentThread || !confirm("このスレッドと全レスを削除しますか？この操作は取り消せません。")) return; deleteThreadButton.disabled = true; try { const threadRef = doc(db, "threads", id); const replies = await getDocs(query(collection(threadRef, "replies"), orderBy("createdAt", "asc"))); const imageRecordsToRemove = [currentThread, ...replies.docs.map((reply) => reply.data())].flatMap(imageRecords); const refs = [...replies.docs.map((reply) => reply.ref), threadRef]; for (let start = 0; start < refs.length; start += 450) { const batch = writeBatch(db); refs.slice(start, start + 450).forEach((ref) => batch.delete(ref)); await batch.commit(); } await removePostImages(imageRecordsToRemove).catch(console.warn); unsubscribeReplies?.(); location.replace("./index.html"); } catch (error) { showToast(firebaseMessage(error)); deleteThreadButton.disabled = false; } }
-replyForm.addEventListener("submit", async (event) => { event.preventDefault(); if (!currentUser) { showToast("投稿にはログインが必要です。"); location.href = "./login.html"; return; } const body = $("#reply-body").value.trim(); const author = postAuthor(currentUser, $("#reply-author").value, $("#reply-author-color").value); const imageFiles = [...$("#reply-image").files]; if ((!body && !imageFiles.length) || !id) { showToast("本文または画像を入力してください。"); return; } const imageError = validateImages(imageFiles); if (imageError) { showToast(imageError); return; } replyButton.disabled = true; let images = []; try { const firstLoginAt = await getFirstLoginAt(currentUser); const threadRef = doc(db, "threads", id); images = await uploadPostImages(imageFiles, currentUser.uid); const replyRef = doc(collection(threadRef, "replies")); const batch = writeBatch(db); batch.set(replyRef, { body, authorId: currentUser.uid, authorName: author.name, authorColor: author.color, authorFirstLoginAt: firstLoginAt, imageUrls: images.map((image) => image.url), imagePaths: images.map((image) => image.path), imageUrl: images[0]?.url || null, createdAt: serverTimestamp(), }); batch.update(threadRef, { replyCount: increment(1) }); await batch.commit(); void requestPostNotification(currentUser, { type: "reply", threadId: id, replyId: replyRef.id }).catch(console.warn); replyForm.reset(); lockAuthorInputs(currentUser, $("#reply-author"), $("#reply-author-color")); } catch (error) { await removePostImages(images).catch(console.warn); showToast(firebaseMessage(error)); } finally { replyButton.disabled = false; } });
+replyForm.addEventListener("submit", async (event) => { event.preventDefault(); if (!currentUser) { showToast("投稿にはログインが必要です。"); location.href = "./login.html"; return; } const body = $("#reply-body").value.trim(); const author = postAuthor(currentUser, $("#reply-author").value, $("#reply-author-color").value); const imageFiles = [...$("#reply-image").files]; if ((!body && !imageFiles.length) || !id) { showToast("本文または画像を入力してください。"); return; } const imageError = validateImages(imageFiles); if (imageError) { showToast(imageError); return; } replyButton.disabled = true; let images = []; try { const firstLoginAt = await getFirstLoginAt(currentUser); const threadRef = doc(db, "threads", id); images = await uploadPostImages(imageFiles, currentUser.uid); const replyRef = doc(collection(threadRef, "replies")); const batch = writeBatch(db); batch.set(replyRef, { body, authorId: currentUser.uid, authorName: author.name, authorColor: author.color, authorFirstLoginAt: firstLoginAt, imageUrls: images.map((image) => image.url), imagePaths: images.map((image) => image.path), imageUrl: images[0]?.url || null, createdAt: serverTimestamp(), }); batch.update(threadRef, { replyCount: increment(1) }); await batch.commit(); void requestPostNotification(currentUser, { type: "reply", threadId: id, replyId: replyRef.id }).catch(console.warn); replyForm.reset(); lockAuthorInputs(currentUser); } catch (error) { await removePostImages(images).catch(console.warn); showToast(firebaseMessage(error)); } finally { replyButton.disabled = false; } });
 loadThread();
 deleteThreadButton.addEventListener("click", deleteThread);
 window.addEventListener("pagehide", () => unsubscribeReplies?.());

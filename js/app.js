@@ -3,7 +3,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
-import { $, displayName, firebaseMessage, formatDate, lockAuthorInputs, postAuthor, showToast } from "./util.js";
+import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 import { getFirstLoginAt } from "./user.js";
 import { initNotifications } from "./notifications-mobile.js";
@@ -12,11 +12,27 @@ import { requestPostNotification } from "./notify-api-mobile.js";
 initTheme();
 const list = $("#thread-list"), form = $("#thread-form"), createButton = $("#create-thread-button");
 let currentUser = null;
+const ADMIN_EMAIL = "tomohiro6231@gmail.com";
+const ADMIN_AUTHOR_NAME = "管理者";
+const ADMIN_AUTHOR_COLOR = "#c026d3";
+
+function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; }
+function postAuthor(user, name, color) {
+  return isAdminUser(user)
+    ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
+    : { name: name?.trim() || "名無しさん", color };
+}
+function lockAuthorInputs(user) {
+  const nameInput = $("#thread-author"), colorInput = $("#thread-author-color");
+  const locked = isAdminUser(user);
+  nameInput.disabled = locked; colorInput.disabled = locked;
+  if (locked) { nameInput.value = ADMIN_AUTHOR_NAME; colorInput.value = ADMIN_AUTHOR_COLOR; }
+}
 initNotifications(() => currentUser);
 
 function syncAuth(user) {
   currentUser = user;
-  lockAuthorInputs(user, $("#thread-author"), $("#thread-author-color"));
+  lockAuthorInputs(user);
   if (user) getFirstLoginAt(user).catch(console.warn);
   $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user;
   createButton.disabled = !user;
