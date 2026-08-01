@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="10ちゃんねる のスレッド">
+    <meta name="theme-color" content="#2563eb">
+    <title>スレッド | 10ちゃんねる</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="favicone.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="./css/style.css">
+    <!-- OneSignal のWeb Push SDK。初期化は js/notifications.js で行います。 -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html">10ちゃんねる</a>
+      <nav class="header-actions" aria-label="ヘッダーメニュー">
+        <button class="button button-ghost notification-button" type="button" aria-label="通知を許可" title="通知を許可">通知を許可</button>
+        <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
+        <a class="button button-primary login-link" href="./login.html">ログイン</a>
+        <button class="button button-ghost logout-button" type="button" hidden>ログアウト</button>
+      </nav>
+    </header>
+    <main class="container thread-page">
+      <a class="back-link" href="./index.html">← スレッド一覧へ</a>
+      <section id="thread-detail" class="thread-detail panel" aria-live="polite"></section>
+      <div class="admin-actions">
+        <button id="delete-thread-button" class="button button-danger" type="button" hidden>スレッドを削除</button>
+      </div>
+      <section class="reply-section" aria-labelledby="replies-heading">
+        <div class="section-heading"><h2 id="replies-heading">レス</h2><p id="reply-count" class="muted"></p></div>
+        <div id="reply-list" class="reply-list" aria-live="polite"></div>
+      </section>
+      <section class="panel" aria-labelledby="reply-form-heading">
+        <h2 id="reply-form-heading">レスを投稿</h2>
+        <p id="login-notice" class="muted">投稿にはログインが必要です。</p>
+        <form id="reply-form" class="stack-form">
+          <label for="reply-author">投稿者名 <span class="optional">（任意）</span></label>
+          <input id="reply-author" name="authorName" type="text" maxlength="24" autocomplete="nickname" placeholder="未入力の場合は名無しさん">
+          <label for="reply-author-color">投稿者名の色</label>
+          <input id="reply-author-color" class="color-input" name="authorColor" type="color" value="#2563eb">
+          <label for="reply-body">内容</label>
+          <textarea id="reply-body" name="body" maxlength="2000" rows="5" placeholder="思いやりをもって投稿しましょう（画像のみでも投稿できます）"></textarea>
+          <label for="reply-image">画像 <span class="optional">（任意・3枚まで、1枚5MBまで）</span></label>
+          <input id="reply-image" name="image" type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+          <button id="reply-button" class="button button-primary" type="submit">投稿する</button>
+        </form>
+      </section>
+    </main>
+    <dialog id="image-dialog" class="image-dialog" aria-label="添付画像の拡大表示">
+      <button id="image-dialog-close" class="image-dialog-close" type="button" aria-label="拡大画像を閉じる">×</button>
+      <img id="image-dialog-image" alt="拡大した添付画像">
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- Versioned URL prevents an old service-worker cache from mixing script releases. -->
+    <script type="module" src="./js/thread.js?v=20260802-2"></script>
+  </body>
+</html>
