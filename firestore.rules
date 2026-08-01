@@ -1,11 +1,74 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'tomohiro6231@gmail.com';
+    }
+    function validText(text, maxLength) {
+      return text is string && text.size() > 0 && text.size() <= maxLength;
+    }
+    function validColor(color) {
+      return color is string && color.matches('^#[0-9A-Fa-f]{6}$');
+    }
+    function validAuthor(name, color) {
+      return isAdmin()
+        ? name == '管理者' && color == '#c026d3'
+        : validText(name, 24) && validColor(color);
+    }
+    function hasTextOrImage(text) {
+      return text is string && text.size() <= 2000
+        && (text.size() > 0 || request.resource.data.imageUrl is string);
+    }
+
+    match /users/{userId} {
+      allow get: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['firstLoginAt'])
+        && request.resource.data.firstLoginAt == request.time;
+      allow update, delete: if false;
+    }
+
     match /notificationDevices/{subscriptionId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.resource.data.ownerId == request.auth.uid;
-      allow update: if request.auth != null && resource.data.ownerId == request.auth.uid && request.resource.data.ownerId == request.auth.uid;
-      allow delete: if request.auth != null && resource.data.ownerId == request.auth.uid;
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid;
+      allow update: if signedIn()
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == request.auth.uid;
+      allow delete: if signedIn()
+        && resource.data.ownerId == request.auth.uid;
+    }
+
+    match /threads/{threadId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && validText(request.resource.data.title, 80)
+        && hasTextOrImage(request.resource.data.firstPost)
+        && request.resource.data.authorId == request.auth.uid
+        && validAuthor(request.resource.data.authorName, request.resource.data.authorColor)
+        && request.resource.data.titleLower is string
+        && request.resource.data.replyCount == 0;
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount'])
+        && (request.resource.data.replyCount == resource.data.replyCount + 1
+          || (isAdmin() && request.resource.data.replyCount == resource.data.replyCount - 1));
+      allow delete: if isAdmin();
+
+      match /replies/{replyId} {
+        allow read: if true;
+        allow create: if signedIn()
+          && exists(/databases/$(database)/documents/threads/$(threadId))
+          && hasTextOrImage(request.resource.data.body)
+          && request.resource.data.authorId == request.auth.uid
+          && validAuthor(request.resource.data.authorName, request.resource.data.authorColor)
+          && request.resource.data.authorFirstLoginAt
+            == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.firstLoginAt;
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
     }
   }
 }
