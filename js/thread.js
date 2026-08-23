@@ -20,6 +20,7 @@ const ADMIN_EMAIL = "tomohiro6231@gmail.com";
 const ADMIN_AUTHOR_NAME = "管理者";
 const ADMIN_AUTHOR_COLOR = "#c026d3";
 function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; }
+function isAdminPost(name, color) { return name === ADMIN_AUTHOR_NAME && color?.toLowerCase() === ADMIN_AUTHOR_COLOR; }
 function postAuthor(user, name, color) {
   return isAdminUser(user)
     ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
@@ -45,7 +46,8 @@ function requestPostNotification(post) {
 function syncAuth(user) { currentUser = user; if (!user) { location.replace("./login.html"); return; } lockAuthorInputs(user); getFirstLoginAt(user).catch(console.warn); $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user; replyButton.disabled = !user; deleteThreadButton.hidden = !isAdmin(user); $("#login-notice").textContent = `${displayName(user)} として投稿します。`; if (latestReplies) renderReplies(latestReplies); loadThread(); }
 onAuthStateChanged(auth, syncAuth); $(".logout-button").addEventListener("click", () => signOut(auth));
 function empty(message) { detail.innerHTML = `<p class="empty-state">${message}</p>`; }
-function authorNode(name, color) { const author = document.createElement("span"); author.textContent = name || "名無しさん"; if (/^#[0-9a-f]{6}$/i.test(color || "")) author.style.color = color; return author; }
+// Render the original crown only on the administrator's enforced name/color pair.
+function authorNode(name, color) { const author = document.createElement("span"); author.textContent = name || "名無しさん"; if (/^#[0-9a-f]{6}$/i.test(color || "")) author.style.color = color; if (isAdminPost(name, color)) { const crown = document.createElementNS("http://www.w3.org/2000/svg", "svg"); crown.classList.add("admin-crown"); crown.setAttribute("viewBox", "0 0 32 28"); crown.setAttribute("role", "img"); crown.setAttribute("aria-label", "管理者"); crown.innerHTML = '<path d="M3 8.5 9.5 14 16 4l6.5 10L29 8.5l-3.2 16H6.2L3 8.5Z"/><path d="M7.2 27h17.6"/>'; author.append(crown); } return author; }
 function isFirstThreeDays(firstLoginAt) { return firstLoginAt?.toMillis && Date.now() - firstLoginAt.toMillis() < 3 * 24 * 60 * 60 * 1000; }
 function appendLinkedText(element, text) { const urlPattern = /(https?:\/\/[^\s<>]+)/g; const trailingPunctuation = /[),.、。！？]+$/; String(text).split(urlPattern).forEach((part) => { if (!part) return; if (!/^https?:\/\//.test(part)) { element.append(document.createTextNode(part)); return; } const url = part.replace(trailingPunctuation, ""); element.append(document.createElement("a")); const link = element.lastElementChild; link.href = url; link.textContent = url; link.target = "_blank"; link.rel = "noopener noreferrer"; if (url !== part) element.append(document.createTextNode(part.slice(url.length))); }); }
 function imageRecords(post) { const paths = Array.isArray(post.imagePaths) ? post.imagePaths : (post.imagePath ? [post.imagePath] : []); return paths.filter((path) => typeof path === "string").map((path) => ({ path })); }
