@@ -1,5 +1,5 @@
 // Google authentication entry page. Popup is used because it works well on GitHub Pages.
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { GoogleAuthProvider, onAuthStateChanged, signInWithCustomToken, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { auth, isFirebaseConfigured } from "./firebase.js";
 import { $, firebaseMessage } from "./util.js";
 import { initTheme } from "./theme.js";
@@ -11,13 +11,32 @@ void import("./notifications-mobile.js?v=20260802-3")
   .then(({ initNotifications }) => initNotifications(() => null))
   .catch((error) => console.warn("Notification UI is unavailable.", error));
 const button = $("#google-login");
+const discordButton = $("#discord-login");
 const status = $("#auth-status");
+const DISCORD_LOGIN_URL = "https://10ch-notifier.mimiyan4649.workers.dev/discord/start";
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
 onAuthStateChanged(auth, async (user) => { if (user) { try { await getFirstLoginAt(user); } catch (error) { console.warn(error); } location.replace("./index.html"); } });
+const discordResult = new URLSearchParams(location.hash.slice(1));
+const discordToken = discordResult.get("discordToken");
+const discordError = discordResult.get("discordError");
+if (discordToken) {
+  history.replaceState(null, "", location.pathname);
+  status.textContent = "Discord アカウントでログインしています…";
+  signInWithCustomToken(auth, discordToken).catch((error) => { status.textContent = firebaseMessage(error); });
+} else if (discordError) {
+  history.replaceState(null, "", location.pathname);
+  status.textContent = "Discord ログインに失敗しました。もう一度お試しください。";
+}
 button.addEventListener("click", async () => {
   if (!isFirebaseConfigured) { status.textContent = "Firebase の設定値を js/firebase.js に入力してください。"; return; }
   button.disabled = true; status.textContent = "ログイン画面を開いています…";
   try { await signInWithPopup(auth, provider); } catch (error) { status.textContent = firebaseMessage(error); button.disabled = false; }
+});
+discordButton.addEventListener("click", () => {
+  if (!isFirebaseConfigured) { status.textContent = "Firebase の設定値を js/firebase.js に入力してください。"; return; }
+  discordButton.disabled = true;
+  status.textContent = "Discord のログイン画面へ移動しています…";
+  location.assign(DISCORD_LOGIN_URL);
 });
