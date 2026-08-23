@@ -30,7 +30,12 @@ if (discordToken) {
   const errorMessages = {
     firebase_service_account_missing: "Firebaseサービスアカウントの設定がありません。",
     firebase_private_key_invalid: "Firebaseサービスアカウントの秘密鍵が正しくありません。",
-    discord_token_exchange_failed: "Discordの認証情報を交換できませんでした。",
+    discord_token_invalid_client: "DiscordのClient IDまたはClient Secretが正しくありません。",
+    discord_token_invalid_grant: "Discordの認可コードまたはRedirect URLが一致していません。",
+    discord_token_invalid_request: "Discordへの認証リクエストが正しくありません。",
+    discord_token_unauthorized_client: "このDiscordアプリはOAuthログインを許可されていません。",
+    discord_token_unsupported_grant_type: "DiscordのOAuth設定が対応していません。",
+    discord_token_unknown: "Discordの認証情報を交換できませんでした。",
     discord_user_verification_failed: "Discordアカウントを確認できませんでした。"
   };
   status.textContent = errorMessages[discordError] || "Discord ログインに失敗しました。もう一度お試しください。";
