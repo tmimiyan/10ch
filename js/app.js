@@ -5,7 +5,7 @@ import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
-import { getFirstLoginAt } from "./user.js";
+import { getFirstLoginAt } from "./user.js?v=20260824-2";
 
 initTheme();
 const list = $("#thread-list"), form = $("#thread-form"), createButton = $("#create-thread-button");
