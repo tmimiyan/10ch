@@ -3,7 +3,7 @@ import { GoogleAuthProvider, onAuthStateChanged, signInWithCustomToken, signInWi
 import { auth, isFirebaseConfigured } from "./firebase.js";
 import { $, firebaseMessage } from "./util.js";
 import { initTheme } from "./theme.js";
-import { getFirstLoginAt } from "./user.js";
+import { getFirstLoginAt } from "./user.js?v=20260824-2";
 
 initTheme();
 // Login must remain available even if notification-related files are not deployed yet.
