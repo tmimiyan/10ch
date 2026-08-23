@@ -25,13 +25,14 @@
       <section class="auth-card" aria-labelledby="login-heading">
         <p class="eyebrow">WELCOME</p>
         <h2 id="login-heading">10ちゃんねる にログイン</h2>
-        <p class="muted">Google アカウントでログインすると、スレッド作成とレス投稿ができます。</p>
+        <p class="muted">Google または Discord のアカウントでログインできます。</p>
         <button id="google-login" class="button button-google" type="button"><span aria-hidden="true">G</span> Google でログイン</button>
+        <button id="discord-login" class="button button-discord" type="button"><span aria-hidden="true">◉</span> Discord でログイン</button>
         <p id="auth-status" class="form-status" aria-live="polite"></p>
         <a class="back-link" href="./index.html">← 掲示板へ戻る</a>
       </section>
     </main>
     <!-- Versioned URL prevents an old service-worker cache from mixing script releases. -->
-    <script type="module" src="./js/auth.js?v=20260802-2"></script>
+    <script type="module" src="./js/auth.js?v=20260823-1"></script>
   </body>
 </html>
