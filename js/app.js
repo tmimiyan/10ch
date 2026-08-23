@@ -16,8 +16,6 @@ const ADMIN_AUTHOR_COLOR = "#c026d3";
 
 function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; }
 function isAdminPost(post) { return post?.authorName === ADMIN_AUTHOR_NAME && post?.authorColor?.toLowerCase() === ADMIN_AUTHOR_COLOR; }
-// Small original crown mark; kept inline so the static site needs no extra asset.
-function adminCrown() { const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg"); icon.classList.add("admin-crown"); icon.setAttribute("viewBox", "0 0 32 28"); icon.setAttribute("role", "img"); icon.setAttribute("aria-label", "管理者"); icon.innerHTML = '<path d="M3 8.5 9.5 14 16 4l6.5 10L29 8.5l-3.2 16H6.2L3 8.5Z"/><path d="M7.2 27h17.6"/>'; return icon; }
 function postAuthor(user, name, color) {
   return isAdminUser(user)
     ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
@@ -66,7 +64,8 @@ function renderThreads(threads) {
     $(".thread-title", node).textContent = thread.title;
     $(".thread-preview", node).textContent = thread.firstPost || (thread.imageUrls?.length || thread.imageUrl ? "画像付きの投稿" : "");
     const author = $(".thread-author", node); author.textContent = thread.authorName || "名無しさん";
-    if (isAdminPost(thread)) author.append(adminCrown());
+    // The crown is generated only for the administrator's protected post identity.
+    if (isAdminPost(thread)) author.append(document.createTextNode(" 👑"));
     if (/^#[0-9a-f]{6}$/i.test(thread.authorColor || "")) author.style.color = thread.authorColor;
     $(".thread-date", node).textContent = formatDate(thread.createdAt);
     $(".thread-replies", node).textContent = `レス ${thread.replyCount || 0}`;
@@ -89,7 +88,9 @@ form.addEventListener("submit", async (event) => {
   if (!currentUser) { showToast("スレッド作成にはログインが必要です。"); location.href = "./login.html"; return; }
   const data = new FormData(form); const title = data.get("title").trim(); const firstPost = data.get("body").trim();
   const imageFiles = [...$("#thread-image").files];
-  const author = postAuthor(currentUser, data.get("authorName"), data.get("authorColor"));
+  const inputAuthorName = data.get("authorName")?.trim() || "";
+  if (!isAdminUser(currentUser) && inputAuthorName.includes("👑")) { showToast("王冠の絵文字は管理者専用です。"); return; }
+  const author = postAuthor(currentUser, inputAuthorName, data.get("authorColor"));
   if (!title || (!firstPost && !imageFiles.length)) { showToast("本文または画像を入力してください。"); return; }
   const imageError = validateImages(imageFiles);
   if (imageError) { showToast(imageError); return; }
@@ -104,4 +105,4 @@ form.addEventListener("submit", async (event) => {
 });
 $("#search-form").addEventListener("submit", (event) => { event.preventDefault(); const keyword = $("#search-input").value; $("#clear-search").hidden = !keyword.trim(); loadThreads(keyword); });
 $("#clear-search").addEventListener("click", () => { $("#search-input").value = ""; $("#clear-search").hidden = true; loadThreads(); });
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260816-1").catch(console.warn));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260824-4").catch(console.warn));
