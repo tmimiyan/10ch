@@ -27,7 +27,13 @@ if (discordToken) {
   signInWithCustomToken(auth, discordToken).catch((error) => { status.textContent = firebaseMessage(error); });
 } else if (discordError) {
   history.replaceState(null, "", location.pathname);
-  status.textContent = "Discord ログインに失敗しました。もう一度お試しください。";
+  const errorMessages = {
+    firebase_service_account_missing: "Firebaseサービスアカウントの設定がありません。",
+    firebase_private_key_invalid: "Firebaseサービスアカウントの秘密鍵が正しくありません。",
+    discord_token_exchange_failed: "Discordの認証情報を交換できませんでした。",
+    discord_user_verification_failed: "Discordアカウントを確認できませんでした。"
+  };
+  status.textContent = errorMessages[discordError] || "Discord ログインに失敗しました。もう一度お試しください。";
 }
 button.addEventListener("click", async () => {
   if (!isFirebaseConfigured) { status.textContent = "Firebase の設定値を js/firebase.js に入力してください。"; return; }
