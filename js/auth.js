@@ -30,6 +30,8 @@ if (discordToken) {
   const errorMessages = {
     firebase_service_account_missing: "Firebaseサービスアカウントの設定がありません。",
     firebase_private_key_invalid: "Firebaseサービスアカウントの秘密鍵が正しくありません。",
+    firebase_profile_access_token_failed: "Discordプロフィールを保存する権限がありません。",
+    discord_profile_save_failed: "Discordプロフィールを保存できませんでした。",
     discord_token_invalid_client: "DiscordのClient IDまたはClient Secretが正しくありません。",
     discord_token_invalid_grant: "Discordの認可コードまたはRedirect URLが一致していません。",
     discord_token_invalid_request: "Discordへの認証リクエストが正しくありません。",
