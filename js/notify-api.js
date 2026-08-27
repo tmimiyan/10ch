@@ -1,5 +1,5 @@
 // Cloudflare Worker に通知作成を依頼します。通知失敗は投稿自体を失敗させません。
-const WORKER_URL = "https://10ch-notifier.mimiyan4649.workers.dev";
+const WORKER_URL = "https://10ch-notifier.dlogin.workers.dev";
 
 export async function requestPostNotification(user, post) {
   if (!user || WORKER_URL.startsWith("YOUR_")) return;
