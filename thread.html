@@ -10,6 +10,8 @@
     <link rel="shortcut icon" href="favicone.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="./css/style.css">
+    <!-- 管理者用の削除アイコン -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- OneSignal のWeb Push SDK。初期化は js/notifications.js で行います。 -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   </head>
@@ -27,7 +29,7 @@
       <a class="back-link" href="./index.html">← スレッド一覧へ</a>
       <section id="thread-detail" class="thread-detail panel" aria-live="polite"></section>
       <div class="admin-actions">
-        <button id="delete-thread-button" class="button button-danger" type="button" hidden>スレッドを削除</button>
+        <button id="delete-thread-button" class="button button-danger delete-icon-button" type="button" hidden aria-label="スレッドを削除" title="スレッドを削除"><i class="fas fa-trash" aria-hidden="true"></i></button>
       </div>
       <section class="reply-section" aria-labelledby="replies-heading">
         <div class="section-heading"><h2 id="replies-heading">レス</h2><p id="reply-count" class="muted"></p></div>
@@ -55,6 +57,6 @@
     </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <!-- Versioned URL prevents an old service-worker cache from mixing script releases. -->
-    <script type="module" src="./js/thread.js?v=20260824-4"></script>
+    <script type="module" src="./js/thread.js?v=20260828-1"></script>
   </body>
 </html>
