@@ -33,7 +33,7 @@ void import("./notifications-mobile.js?v=20260802-3")
   .catch((error) => console.warn("Notification UI is unavailable.", error));
 
 function requestPostNotification(post) {
-  void import("./notify-api-mobile.js?v=20260802-3")
+  void import("./notify-api-mobile.js?v=20260828-1")
     .then(({ requestPostNotification: send }) => send(currentUser, post))
     .catch((error) => console.warn("Notification delivery is unavailable.", error));
 }
