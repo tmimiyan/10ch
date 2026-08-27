@@ -1,6 +1,6 @@
 // 投稿後に Cloudflare Worker へ通知を依頼するための小さな通信モジュールです。
 // モバイル回線で一時的に通信が切り替わることを考慮し、1 回だけ再試行します。
-const WORKER_URL = "https://10ch-notifier.mimiyan4649.workers.dev";
+const WORKER_URL = "https://10ch-notifier.dlogin.workers.dev";
 const RETRY_DELAY_MS = 1200;
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
