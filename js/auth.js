@@ -13,7 +13,7 @@ void import("./notifications-mobile.js?v=20260802-3")
 const button = $("#google-login");
 const discordButton = $("#discord-login");
 const status = $("#auth-status");
-const DISCORD_LOGIN_URL = "https://10ch-notifier.mimiyan4649.workers.dev/discord/start";
+const DISCORD_LOGIN_URL = "https://10ch-notifier.dlogin.workers.dev/discord/start";
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
