@@ -1,7 +1,7 @@
 // Offline shell. Push notifications are handled by onesignal/OneSignalSDKWorker.js.
 // Bump this whenever module dependencies change so all browsers receive one consistent release.
 const CACHE_NAME = "10ch-v19";
-const CACHE_NAME = "10ch-v24";
+const CACHE_NAME = "10ch-v26";
 const ASSETS = ["./", "./index.html", "./login.html", "./thread.html", "./css/style.css", "./js/app.js", "./js/auth.js", "./js/thread.js", "./js/theme.js", "./js/util.js", "./js/user.js", "./js/media.js", "./js/notifications-mobile.js", "./js/notification-devices.js", "./js/notify-api-mobile.js", "./manifest.json"];
 // Cache optional files independently so a notification asset cannot block the board from updating.
 self.addEventListener("install", (event) => event.waitUntil(
