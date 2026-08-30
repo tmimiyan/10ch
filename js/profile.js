@@ -4,7 +4,7 @@ import { collection, collectionGroup, doc, getDoc, getDocs, query, serverTimesta
 import { auth, db } from "./firebase.js";
 import { $, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
-import { initAccountMenu } from "./profile-ui.js";
+import { initAccountMenu } from "./profile-ui.js?v=20260830-2";
 import { syncPublicProfile } from "./user.js?v=20260830-2";
 
 initTheme();
@@ -13,6 +13,11 @@ const profileId = new URLSearchParams(location.search).get("uid");
 const postList = $("#profile-post-list");
 let currentUser = null;
 let loadedProfile = null;
+
+// The profile page has the same header controls as the board and thread pages.
+void import("./notifications-mobile.js?v=20260830-1")
+  .then(({ initNotifications }) => initNotifications(() => currentUser))
+  .catch((error) => console.warn("Notification UI is unavailable.", error));
 
 function safeImageURL(value) { return /^https:\/\//i.test(String(value || "")) ? String(value) : ""; }
 // Keep a profile name on one line by reducing its size to the available space.
