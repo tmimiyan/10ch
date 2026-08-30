@@ -51,5 +51,7 @@ export function firebaseMessage(error) {
   if (error?.code === "storage/unauthorized") return "画像を保存する権限がありません。Firebase Storage のルールを確認してください。";
   if (error?.code === "storage/quota-exceeded") return "画像保存容量の上限に達しています。Firebase Storage の容量を確認してください。";
   if (error?.code === "unavailable") return "ネットワークに接続できません。接続を確認して再試行してください。";
+  if (error?.code === "failed-precondition") return "Firestore のインデックスまたは設定が不足しています。ブラウザの開発者ツールの Console に表示されるリンクからインデックスを作成してください。";
+  if (error?.code === "unauthenticated") return "ログイン情報を確認できませんでした。ログインし直してください。";
   return "処理に失敗しました。もう一度お試しください。";
 }
