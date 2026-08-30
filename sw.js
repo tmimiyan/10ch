@@ -1,6 +1,6 @@
 // Offline shell. Push notifications are handled by onesignal/OneSignalSDKWorker.js.
 // Bump this whenever module dependencies change so all browsers receive one consistent release.
-const CACHE_NAME = "10ch-v35";
+const CACHE_NAME = "10ch-v36";
 const ASSETS = ["./", "./index.html", "./login.html", "./thread.html", "./profile.html", "./css/style.css", "./js/app.js", "./js/auth.js", "./js/thread.js", "./js/profile.js", "./js/profile-ui.js", "./js/theme.js", "./js/util.js", "./js/user.js", "./js/media.js", "./js/notifications-mobile.js", "./js/notification-devices.js", "./js/notify-api-mobile.js", "./manifest.json"];
 // Cache optional files independently so a notification asset cannot block the board from updating.
 self.addEventListener("install", (event) => event.waitUntil(
@@ -9,4 +9,17 @@ self.addEventListener("install", (event) => event.waitUntil(
     .then(() => self.skipWaiting())
 ));
 self.addEventListener("activate", (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
-self.addEventListener("fetch", (event) => { if (event.request.method !== "GET") return; event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request))); });
+self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  // Always refresh pages and their code/styles when online. This prevents an old
+  // offline shell from keeping a previous UI version alive after a GitHub deploy.
+  const refreshable = event.request.mode === "navigate" || ["script", "style"].includes(event.request.destination);
+  if (refreshable) {
+    event.respondWith(fetch(event.request).then((response) => {
+      if (response.ok) void caches.open(CACHE_NAME).then((cache) => cache.put(event.request, response.clone()));
+      return response;
+    }).catch(() => caches.match(event.request)));
+    return;
+  }
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
+});
