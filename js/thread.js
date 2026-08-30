@@ -26,7 +26,22 @@ function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; 
 function isAdminPost(name, color) { return name === ADMIN_AUTHOR_NAME && color?.toLowerCase() === ADMIN_AUTHOR_COLOR; }
 function hasProfileLink(name, visible) { return visible === true || (visible === undefined && name && name !== "名無しさん"); }
 function canDeletePost(post) { return Boolean(currentUser && post && (isAdmin(currentUser) || (post.authorId === currentUser.uid && post.createdAt?.toMillis && Date.now() - post.createdAt.toMillis() < 5 * 60 * 1000))); }
-function updateThreadDeleteButton() { clearTimeout(threadDeleteTimer); const administrator = isAdmin(currentUser); const ownEmptyThread = canDeletePost(currentThread) && currentThread?.replyCount === 0; deleteThreadButton.hidden = !(administrator || ownEmptyThread); deleteThreadButton.classList.toggle("user-delete-icon-button", !administrator && ownEmptyThread); if (!administrator && ownEmptyThread) { const remaining = currentThread.createdAt.toMillis() + 5 * 60 * 1000 - Date.now(); threadDeleteTimer = setTimeout(updateThreadDeleteButton, Math.max(0, remaining) + 50); } }
+function updateThreadDeleteButton() {
+  clearTimeout(threadDeleteTimer);
+  const administrator = isAdmin(currentUser);
+  // Regular users may delete only their own reply-free thread for five minutes.
+  const ownEmptyThread = canDeletePost(currentThread) && currentThread?.replyCount === 0;
+  const showButton = administrator || ownEmptyThread;
+  deleteThreadButton.hidden = !showButton;
+  deleteThreadButton.classList.toggle("button-danger", administrator);
+  deleteThreadButton.classList.toggle("user-delete-icon-button", !administrator && ownEmptyThread);
+
+  // Hide the regular-user button as soon as the five-minute window expires.
+  if (!administrator && ownEmptyThread) {
+    const remaining = currentThread.createdAt.toMillis() + 5 * 60 * 1000 - Date.now();
+    threadDeleteTimer = setTimeout(updateThreadDeleteButton, Math.max(0, remaining) + 50);
+  }
+}
 function postAuthor(user, name, color) {
   return isAdminUser(user)
     ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
