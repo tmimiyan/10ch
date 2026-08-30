@@ -10,7 +10,10 @@ export function applyTheme(theme) {
 }
 
 export function initTheme() {
-  const saved = localStorage.getItem(key);
+  // A privacy mode can block localStorage. Theme switching itself must still
+  // work in that case, even though the choice cannot be remembered.
+  let saved = null;
+  try { saved = localStorage.getItem(key); } catch (error) { console.warn("Theme preference could not be read.", error); }
   const preferred = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   applyTheme(saved || preferred);
   // One delegated listener works even when header controls are initialized by
@@ -21,7 +24,7 @@ export function initTheme() {
     const button = event.target.closest?.(".theme-toggle");
     if (!button) return;
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    localStorage.setItem(key, next);
     applyTheme(next);
+    try { localStorage.setItem(key, next); } catch (error) { console.warn("Theme preference could not be saved.", error); }
   });
 }
