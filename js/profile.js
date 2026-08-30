@@ -15,6 +15,18 @@ let currentUser = null;
 let loadedProfile = null;
 
 function safeImageURL(value) { return /^https:\/\//i.test(String(value || "")) ? String(value) : ""; }
+// Keep a profile name on one line by reducing its size to the available space.
+// The CSS ellipsis remains as a final guard for exceptionally long names.
+function fitProfileName() {
+  const nameElement = $("#profile-name");
+  if (!nameElement) return;
+  let size = Math.min(innerWidth <= 560 ? 24 : 32, Math.max(18, innerWidth * 0.06));
+  nameElement.style.fontSize = `${size}px`;
+  while (nameElement.scrollWidth > nameElement.clientWidth && size > 13) {
+    size -= 0.5;
+    nameElement.style.fontSize = `${size}px`;
+  }
+}
 function renderProfile(profile) {
   const name = profile?.displayName || "ユーザー";
   const photoURL = safeImageURL(profile?.photoURL);
@@ -25,6 +37,7 @@ function renderProfile(profile) {
   $("#profile-avatar-fallback").hidden = Boolean(photoURL);
   $("#profile-avatar-fallback").textContent = name.slice(0, 1).toUpperCase();
   document.title = `${name} のプロフィール | 10ちゃんねる`;
+  requestAnimationFrame(fitProfileName);
 }
 function postNode(post) { const article = document.createElement("article"); article.className = "profile-post"; const link = document.createElement("a"); link.className = "profile-post-link"; link.href = `./thread.html?id=${encodeURIComponent(post.threadId)}`; const title = document.createElement("h3"); title.textContent = post.title; const body = document.createElement("p"); body.textContent = post.body || "画像付きの投稿"; const meta = document.createElement("p"); meta.className = "muted"; meta.textContent = `${post.kind}　${formatDate(post.createdAt)}`; link.append(title, body, meta); article.append(link); return article; }
 async function loadPosts(uid) {
@@ -90,3 +103,4 @@ $("#profile-form").addEventListener("submit", async (event) => {
   catch (error) { $("#profile-status").textContent = firebaseMessage(error); }
 });
 onAuthStateChanged(auth, async (user) => { currentUser = user; if (!user) { location.replace("./login.html"); return; } if (!profileId) { location.replace(`./profile.html?uid=${encodeURIComponent(user.uid)}`); return; } try { await syncPublicProfile(user); await loadProfile(profileId); } catch (error) { $("#profile-name").textContent = firebaseMessage(error); } });
+addEventListener("resize", fitProfileName);
