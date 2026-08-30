@@ -3,7 +3,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/f
 import { collection, collectionGroup, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { auth, db } from "./firebase.js";
 import { $, firebaseMessage, formatDate, showToast } from "./util.js";
-import { initTheme } from "./theme.js?v=20260831-1";
+import { initTheme } from "./theme.js?v=20260831-2";
 import { initAccountMenu } from "./profile-ui.js?v=20260830-3";
 import { syncPublicProfile } from "./user.js?v=20260830-2";
 
