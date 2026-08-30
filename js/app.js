@@ -1,13 +1,15 @@
 // Home page: authenticates users, creates threads, and lists/searches Firestore data.
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
-import { getFirstLoginAt } from "./user.js?v=20260824-2";
+import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-1";
+import { initAccountMenu } from "./profile-ui.js";
 
 initTheme();
+initAccountMenu();
 const list = $("#thread-list"), form = $("#thread-form"), createButton = $("#create-thread-button");
 let currentUser = null;
 const ADMIN_EMAIL = "tomohiro6231@gmail.com";
@@ -16,6 +18,7 @@ const ADMIN_AUTHOR_COLOR = "#c026d3";
 
 function isAdminUser(user) { return user?.email?.toLowerCase() === ADMIN_EMAIL; }
 function isAdminPost(post) { return post?.authorName === ADMIN_AUTHOR_NAME && post?.authorColor?.toLowerCase() === ADMIN_AUTHOR_COLOR; }
+function hasProfileLink(post) { return post?.authorProfileVisible === true || (post?.authorProfileVisible === undefined && post?.authorName && post.authorName !== "名無しさん"); }
 function postAuthor(user, name, color) {
   return isAdminUser(user)
     ? { name: ADMIN_AUTHOR_NAME, color: ADMIN_AUTHOR_COLOR }
@@ -46,13 +49,13 @@ function syncAuth(user) {
   }
   lockAuthorInputs(user);
   getFirstLoginAt(user).catch(console.warn);
-  $(".login-link").hidden = Boolean(user); $(".logout-button").hidden = !user;
+  $(".login-link").hidden = Boolean(user);
+  syncPublicProfile(user).catch(console.warn);
   createButton.disabled = !user;
   createButton.title = user ? "" : "ログイン後に作成できます";
   loadThreads();
 }
 onAuthStateChanged(auth, syncAuth);
-$(".logout-button").addEventListener("click", () => signOut(auth));
 
 function renderThreads(threads) {
   list.replaceChildren(); $("#thread-count").textContent = `${threads.length} 件のスレッド`;
@@ -64,6 +67,8 @@ function renderThreads(threads) {
     $(".thread-title", node).textContent = thread.title;
     $(".thread-preview", node).textContent = thread.firstPost || (thread.imageUrls?.length || thread.imageUrl ? "画像付きの投稿" : "");
     const author = $(".thread-author", node); author.textContent = thread.authorName || "名無しさん";
+    if (hasProfileLink(thread) && thread.authorId) author.href = `./profile.html?uid=${encodeURIComponent(thread.authorId)}`;
+    else { author.removeAttribute("href"); author.classList.add("is-anonymous"); }
     // The crown is generated only for the administrator's protected post identity.
     if (isAdminPost(thread)) author.append(document.createTextNode(" 👑"));
     if (/^#[0-9a-f]{6}$/i.test(thread.authorColor || "")) author.style.color = thread.authorColor;
@@ -98,11 +103,12 @@ form.addEventListener("submit", async (event) => {
   let images = [];
   try {
     images = await uploadPostImages(imageFiles, currentUser.uid);
-    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName: author.name, authorColor: author.color, imageUrls: images.map((image) => image.url), imagePaths: images.map((image) => image.path), imageUrl: images[0]?.url || null, createdAt: serverTimestamp(), replyCount: 0 });
+    const authorProfileVisible = isAdminUser(currentUser) || Boolean(inputAuthorName && inputAuthorName !== "名無しさん");
+    const doc = await addDoc(collection(db, "threads"), { title, titleLower: title.toLocaleLowerCase("ja-JP"), firstPost, authorId: currentUser.uid, authorName: author.name, authorColor: author.color, authorProfileVisible, imageUrls: images.map((image) => image.url), imagePaths: images.map((image) => image.path), imageUrl: images[0]?.url || null, createdAt: serverTimestamp(), replyCount: 0 });
     requestPostNotification({ type: "thread", threadId: doc.id });
     form.reset(); location.href = `./thread.html?id=${encodeURIComponent(doc.id)}`;
   } catch (error) { await removePostImages(images).catch(console.warn); showToast(firebaseMessage(error)); createButton.disabled = false; }
 });
 $("#search-form").addEventListener("submit", (event) => { event.preventDefault(); const keyword = $("#search-input").value; $("#clear-search").hidden = !keyword.trim(); loadThreads(keyword); });
 $("#clear-search").addEventListener("click", () => { $("#search-input").value = ""; $("#clear-search").hidden = true; loadThreads(); });
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260824-4").catch(console.warn));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260830-1").catch(console.warn));
