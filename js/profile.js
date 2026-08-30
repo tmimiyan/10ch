@@ -5,12 +5,14 @@ import { auth, db } from "./firebase.js";
 import { $, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 import { initAccountMenu } from "./profile-ui.js";
+import { syncPublicProfile } from "./user.js?v=20260830-2";
 
 initTheme();
 initAccountMenu();
 const profileId = new URLSearchParams(location.search).get("uid");
 const postList = $("#profile-post-list");
 let currentUser = null;
+let loadedProfile = null;
 
 function safeImageURL(value) { return /^https:\/\//i.test(String(value || "")) ? String(value) : ""; }
 function renderProfile(profile) {
@@ -57,17 +59,34 @@ async function loadPosts(uid) {
 async function loadProfile(uid) {
   const snapshot = await getDoc(doc(db, "profiles", uid));
   const profile = snapshot.data() || { displayName: currentUser?.displayName || "ユーザー", photoURL: currentUser?.photoURL || "", bio: "" };
+  loadedProfile = profile;
   renderProfile(profile);
   const ownProfile = currentUser?.uid === uid;
   $("#profile-form").hidden = !ownProfile;
-  if (ownProfile) $("#profile-bio-input").value = profile.bio || "";
+  if (ownProfile) {
+    $("#profile-name-input").value = profile.displayName || "";
+    $("#profile-bio-input").value = profile.bio || "";
+  }
   await loadPosts(uid);
 }
 $("#profile-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!currentUser || currentUser.uid !== profileId) return;
+  const displayName = $("#profile-name-input").value.trim();
   const bio = $("#profile-bio-input").value.trim();
-  try { await setDoc(doc(db, "profiles", currentUser.uid), { bio, updatedAt: serverTimestamp() }, { merge: true }); $("#profile-status").textContent = "保存しました。"; showToast("自己紹介を保存しました。"); }
+  if (!displayName) { $("#profile-status").textContent = "ユーザー名を入力してください。"; return; }
+  try {
+    await setDoc(doc(db, "profiles", currentUser.uid), {
+      displayName: displayName.slice(0, 80),
+      photoURL: safeImageURL(loadedProfile?.photoURL || currentUser.photoURL),
+      bio,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    loadedProfile = { ...loadedProfile, displayName: displayName.slice(0, 80), bio };
+    renderProfile(loadedProfile);
+    $("#profile-status").textContent = "保存しました。";
+    showToast("プロフィールを保存しました。");
+  }
   catch (error) { $("#profile-status").textContent = firebaseMessage(error); }
 });
-onAuthStateChanged(auth, async (user) => { currentUser = user; if (!user) { location.replace("./login.html"); return; } if (!profileId) { location.replace(`./profile.html?uid=${encodeURIComponent(user.uid)}`); return; } try { await loadProfile(profileId); } catch (error) { $("#profile-name").textContent = firebaseMessage(error); } });
+onAuthStateChanged(auth, async (user) => { currentUser = user; if (!user) { location.replace("./login.html"); return; } if (!profileId) { location.replace(`./profile.html?uid=${encodeURIComponent(user.uid)}`); return; } try { await syncPublicProfile(user); await loadProfile(profileId); } catch (error) { $("#profile-name").textContent = firebaseMessage(error); } });
