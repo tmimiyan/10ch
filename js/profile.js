@@ -27,20 +27,32 @@ function renderProfile(profile) {
 function postNode(post) { const article = document.createElement("article"); article.className = "profile-post"; const link = document.createElement("a"); link.className = "profile-post-link"; link.href = `./thread.html?id=${encodeURIComponent(post.threadId)}`; const title = document.createElement("h3"); title.textContent = post.title; const body = document.createElement("p"); body.textContent = post.body || "画像付きの投稿"; const meta = document.createElement("p"); meta.className = "muted"; meta.textContent = `${post.kind}　${formatDate(post.createdAt)}`; link.append(title, body, meta); article.append(link); return article; }
 async function loadPosts(uid) {
   postList.innerHTML = '<p class="empty-state">投稿を読み込み中…</p>';
-  try {
-    const [threads, replies] = await Promise.all([
-      getDocs(query(collection(db, "threads"), where("authorId", "==", uid))),
-      getDocs(query(collectionGroup(db, "replies"), where("authorId", "==", uid)))
-    ]);
-    const posts = [
-      ...threads.docs.map((item) => ({ kind: "スレッド", threadId: item.id, title: item.data().title || "無題のスレッド", body: item.data().firstPost, createdAt: item.data().createdAt })),
-      ...replies.docs.map((item) => ({ kind: "レス", threadId: item.ref.parent.parent.id, title: "スレッドのレス", body: item.data().body, createdAt: item.data().createdAt }))
-    ].sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-    $("#profile-post-count").textContent = `${posts.length} 件`;
-    postList.replaceChildren();
-    if (!posts.length) { postList.innerHTML = '<p class="empty-state">投稿はまだありません。</p>'; return; }
-    posts.forEach((post) => postList.append(postNode(post)));
-  } catch (error) { postList.innerHTML = `<p class="empty-state">${firebaseMessage(error)}</p>`; }
+  // Fetch the two collections independently. A temporary failure in one must not
+  // hide the other type of post from the profile page.
+  const [threadResult, replyResult] = await Promise.allSettled([
+    getDocs(query(collection(db, "threads"), where("authorId", "==", uid))),
+    getDocs(query(collectionGroup(db, "replies"), where("authorId", "==", uid)))
+  ]);
+
+  const threads = threadResult.status === "fulfilled" ? threadResult.value.docs : [];
+  const replies = replyResult.status === "fulfilled" ? replyResult.value.docs : [];
+  const posts = [
+    ...threads.map((item) => ({ kind: "スレッド", threadId: item.id, title: item.data().title || "無題のスレッド", body: item.data().firstPost, createdAt: item.data().createdAt })),
+    ...replies.map((item) => ({ kind: "レス", threadId: item.ref.parent.parent?.id || "", title: "スレッドのレス", body: item.data().body, createdAt: item.data().createdAt }))
+  ].filter((post) => post.threadId).sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+  $("#profile-post-count").textContent = `${posts.length} 件`;
+  postList.replaceChildren();
+  if (posts.length) posts.forEach((post) => postList.append(postNode(post)));
+  else postList.innerHTML = '<p class="empty-state">投稿はまだありません。</p>';
+
+  const failed = [threadResult, replyResult].find((result) => result.status === "rejected");
+  if (failed) {
+    const notice = document.createElement("p");
+    notice.className = "empty-state";
+    notice.textContent = `一部の投稿を読み込めませんでした。${firebaseMessage(failed.reason)}`;
+    postList.prepend(notice);
+  }
 }
 async function loadProfile(uid) {
   const snapshot = await getDoc(doc(db, "profiles", uid));
