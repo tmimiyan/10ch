@@ -13,9 +13,15 @@ export function initTheme() {
   const saved = localStorage.getItem(key);
   const preferred = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   applyTheme(saved || preferred);
-  document.querySelectorAll(".theme-toggle").forEach((button) => button.addEventListener("click", () => {
+  // One delegated listener works even when header controls are initialized by
+  // several modules. It also prevents duplicate toggle listeners on a page.
+  if (document.documentElement.dataset.themeListenerReady === "true") return;
+  document.documentElement.dataset.themeListenerReady = "true";
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest?.(".theme-toggle");
+    if (!button) return;
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     localStorage.setItem(key, next);
     applyTheme(next);
-  }));
+  });
 }
