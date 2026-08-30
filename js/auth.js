@@ -3,7 +3,7 @@ import { GoogleAuthProvider, onAuthStateChanged, signInWithCustomToken, signInWi
 import { auth, isFirebaseConfigured } from "./firebase.js";
 import { $, firebaseMessage } from "./util.js";
 import { initTheme } from "./theme.js";
-import { getFirstLoginAt } from "./user.js?v=20260824-2";
+import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-1";
 
 initTheme();
 // Login must remain available even if notification-related files are not deployed yet.
@@ -17,7 +17,7 @@ const DISCORD_LOGIN_URL = "https://10ch-notifier.dlogin.workers.dev/discord/star
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
-onAuthStateChanged(auth, async (user) => { if (user) { try { await getFirstLoginAt(user); } catch (error) { console.warn(error); } location.replace("./index.html"); } });
+onAuthStateChanged(auth, async (user) => { if (user) { try { await getFirstLoginAt(user); await syncPublicProfile(user); } catch (error) { console.warn(error); } location.replace("./index.html"); } });
 const discordResult = new URLSearchParams(location.hash.slice(1));
 const discordToken = discordResult.get("discordToken");
 const discordError = discordResult.get("discordError");
