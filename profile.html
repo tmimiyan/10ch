@@ -29,15 +29,17 @@
       <section class="profile-card panel" aria-labelledby="profile-name">
         <div class="profile-header"><div class="profile-avatar"><img id="profile-avatar" hidden><span id="profile-avatar-fallback"></span></div><div><h1 id="profile-name">読み込み中…</h1><p id="profile-bio" class="profile-bio"></p></div></div>
         <form id="profile-form" class="stack-form" hidden>
+          <label for="profile-name-input">ユーザー名</label>
+          <input id="profile-name-input" type="text" maxlength="80" autocomplete="nickname" placeholder="ユーザー名を入力">
           <label for="profile-bio-input">自己紹介</label>
           <textarea id="profile-bio-input" maxlength="1000" rows="5" placeholder="自己紹介を書いてみましょう"></textarea>
-          <button class="button button-primary" type="submit">自己紹介を保存</button>
+          <button class="button button-primary" type="submit">プロフィールを保存</button>
           <p id="profile-status" class="form-status" aria-live="polite"></p>
         </form>
       </section>
       <section aria-labelledby="profile-posts-heading"><div class="section-heading"><h2 id="profile-posts-heading">これまでの投稿</h2><p id="profile-post-count" class="muted"></p></div><div id="profile-post-list" class="profile-post-list" aria-live="polite"></div></section>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="./js/profile.js?v=20260830-1"></script>
+    <script type="module" src="./js/profile.js?v=20260830-2"></script>
   </body>
 </html>
