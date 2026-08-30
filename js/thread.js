@@ -5,7 +5,7 @@ import { auth, db, isFirebaseConfigured } from "./firebase.js";
 import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, isAdmin, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
-import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-1";
+import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-2";
 import { initAccountMenu } from "./profile-ui.js";
 
 initTheme();
