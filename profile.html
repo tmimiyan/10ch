@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="10ちゃんねるのユーザープロフィール">
+    <meta name="theme-color" content="#2563eb">
+    <title>プロフィール | 10ちゃんねる</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="favicone.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="./css/style.css?v=20260830-1">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./index.html">10ちゃんねる</a>
+      <nav class="header-actions" aria-label="ヘッダーメニュー">
+        <button class="button button-ghost notification-button" type="button" aria-label="通知を許可" title="通知を許可">通知を許可</button>
+        <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
+        <a class="button button-primary login-link" href="./login.html">ログイン</a>
+        <div class="account-menu" hidden>
+          <button class="account-menu-button" type="button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></button>
+          <div class="account-menu-panel" hidden><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
+        </div>
+      </nav>
+    </header>
+    <main class="container profile-page">
+      <a class="back-link" href="./index.html">← スレッド一覧へ</a>
+      <section class="profile-card panel" aria-labelledby="profile-name">
+        <div class="profile-header"><div class="profile-avatar"><img id="profile-avatar" hidden><span id="profile-avatar-fallback"></span></div><div><h1 id="profile-name">読み込み中…</h1><p id="profile-bio" class="profile-bio"></p></div></div>
+        <form id="profile-form" class="stack-form" hidden>
+          <label for="profile-bio-input">自己紹介</label>
+          <textarea id="profile-bio-input" maxlength="1000" rows="5" placeholder="自己紹介を書いてみましょう"></textarea>
+          <button class="button button-primary" type="submit">自己紹介を保存</button>
+          <p id="profile-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section aria-labelledby="profile-posts-heading"><div class="section-heading"><h2 id="profile-posts-heading">これまでの投稿</h2><p id="profile-post-count" class="muted"></p></div><div id="profile-post-list" class="profile-post-list" aria-live="polite"></div></section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./js/profile.js?v=20260830-1"></script>
+  </body>
+</html>
