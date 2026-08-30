@@ -30,7 +30,24 @@ export function initAccountMenu() {
     button.setAttribute("aria-label", `${name} のアカウントメニュー`);
   };
 
-  button.addEventListener("click", () => { panel.hidden = !panel.hidden; button.setAttribute("aria-expanded", String(!panel.hidden)); });
+  // Handle both mouse clicks and touch/pen taps. The click fallback keeps the
+  // menu keyboard-accessible, while the short guard prevents a tap from toggling
+  // the menu twice when the browser emits its following click event.
+  let lastPointerToggle = 0;
+  const togglePanel = (event) => {
+    event?.stopPropagation();
+    panel.hidden = !panel.hidden;
+    button.setAttribute("aria-expanded", String(!panel.hidden));
+  };
+  button.addEventListener("pointerup", (event) => {
+    lastPointerToggle = Date.now();
+    togglePanel(event);
+  });
+  button.addEventListener("click", (event) => {
+    if (Date.now() - lastPointerToggle < 500) return;
+    togglePanel(event);
+  });
+  panel.addEventListener("click", (event) => event.stopPropagation());
   document.addEventListener("click", (event) => { if (!menu.contains(event.target)) { panel.hidden = true; button.setAttribute("aria-expanded", "false"); } });
   logoutButton.addEventListener("click", () => signOut(auth));
   onAuthStateChanged(auth, (user) => {
