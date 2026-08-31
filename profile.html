@@ -24,6 +24,7 @@
         <!-- The visible avatar itself is the account-menu tap target. -->
         <div class="account-menu" hidden>
           <button class="account-menu-button" type="button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></button>
+          <button class="account-menu-button" type="button" aria-expanded="false" data-native-menu-toggle onclick="const panel=this.nextElementSibling; panel.hidden=!panel.hidden; this.setAttribute('aria-expanded', String(!panel.hidden));"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></button>
           <div class="account-menu-panel" hidden><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
         </div>
       </nav>
@@ -47,6 +48,6 @@
     <!-- Theme control is loaded separately so it never depends on profile data. -->
     <script type="module" src="./js/profile-theme.js?v=20260831-1"></script>
     <script type="module" src="./js/profile.js?v=20260830-2"></script>
-    <script type="module" src="./js/profile.js?v=20260831-7"></script>
+    <script type="module" src="./js/profile.js?v=20260831-8"></script>
   </body>
 </html>
