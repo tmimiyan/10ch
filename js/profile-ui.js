@@ -17,6 +17,7 @@ export function initAccountMenu() {
   const loginLink = document.querySelector(".login-link");
   const logoutButton = document.querySelector(".logout-button");
   if (!menu || !button || !panel || !image || !fallback || !profileLink || !loginLink || !logoutButton) return;
+  const nativeDetailsMenu = menu instanceof HTMLDetailsElement;
 
   let stopProfileListener = null;
   const renderAvatar = (profile, user) => {
@@ -33,26 +34,36 @@ export function initAccountMenu() {
   // Handle both mouse clicks and touch/pen taps. The click fallback keeps the
   // menu keyboard-accessible, while the short guard prevents a tap from toggling
   // the menu twice when the browser emits its following click event.
-  let lastPointerToggle = 0;
-  const togglePanel = (event) => {
-    event?.stopPropagation();
-    panel.hidden = !panel.hidden;
-    button.setAttribute("aria-expanded", String(!panel.hidden));
-  };
-  button.addEventListener("pointerup", (event) => {
-    lastPointerToggle = Date.now();
-    togglePanel(event);
+  if (nativeDetailsMenu) {
+    // <details>/<summary> provides a browser-native tap target on mobile.
+    menu.addEventListener("toggle", () => button.setAttribute("aria-expanded", String(menu.open)));
+  } else {
+    let lastPointerToggle = 0;
+    const togglePanel = (event) => {
+      event?.stopPropagation();
+      panel.hidden = !panel.hidden;
+      button.setAttribute("aria-expanded", String(!panel.hidden));
+    };
+    button.addEventListener("pointerup", (event) => {
+      lastPointerToggle = Date.now();
+      togglePanel(event);
+    });
+    button.addEventListener("click", (event) => {
+      if (Date.now() - lastPointerToggle < 500) return;
+      togglePanel(event);
+    });
+    panel.addEventListener("click", (event) => event.stopPropagation());
+  }
+  document.addEventListener("click", (event) => {
+    if (menu.contains(event.target)) return;
+    if (nativeDetailsMenu) menu.open = false;
+    else { panel.hidden = true; button.setAttribute("aria-expanded", "false"); }
   });
-  button.addEventListener("click", (event) => {
-    if (Date.now() - lastPointerToggle < 500) return;
-    togglePanel(event);
-  });
-  panel.addEventListener("click", (event) => event.stopPropagation());
-  document.addEventListener("click", (event) => { if (!menu.contains(event.target)) { panel.hidden = true; button.setAttribute("aria-expanded", "false"); } });
   logoutButton.addEventListener("click", () => signOut(auth));
   onAuthStateChanged(auth, (user) => {
     stopProfileListener?.();
-    panel.hidden = true;
+    if (nativeDetailsMenu) menu.open = false;
+    else panel.hidden = true;
     if (!user) { menu.hidden = true; loginLink.hidden = false; return; }
     menu.hidden = false;
     loginLink.hidden = true;
