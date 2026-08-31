@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="favicone.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="./css/style.css?v=20260830-3">
-    <link rel="stylesheet" href="./css/style.css?v=20260830-7">
+    <link rel="stylesheet" href="./css/style.css?v=20260831-2">
     <!-- OneSignal のWeb Push SDK。初期化は profile.js で行います。 -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   </head>
@@ -21,10 +21,15 @@
         <button class="button button-ghost notification-button" type="button" aria-label="通知を許可" title="通知を許可">通知を許可</button>
         <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
         <a class="button button-primary login-link" href="./login.html">ログイン</a>
+        <!-- Native details is reliable for both mouse clicks and mobile taps. -->
         <div class="account-menu" hidden>
           <button class="account-menu-button" type="button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></button>
           <div class="account-menu-panel" hidden><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
         </div>
+        <details class="account-menu" hidden>
+          <summary class="account-menu-button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></summary>
+          <div class="account-menu-panel"><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
+        </details>
       </nav>
     </header>
     <main class="container profile-page">
@@ -46,6 +51,6 @@
     <!-- Theme control is loaded separately so it never depends on profile data. -->
     <script type="module" src="./js/profile-theme.js?v=20260831-1"></script>
     <script type="module" src="./js/profile.js?v=20260830-2"></script>
-    <script type="module" src="./js/profile.js?v=20260831-2"></script>
+    <script type="module" src="./js/profile.js?v=20260831-3"></script>
   </body>
 </html>
