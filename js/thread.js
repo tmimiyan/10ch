@@ -6,7 +6,7 @@ import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, isAdmin, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-2";
-import { initAccountMenu } from "./profile-ui.js";
+import { initAccountMenu } from "./profile-ui.js?v=20260831-3";
 
 initTheme();
 initAccountMenu();
