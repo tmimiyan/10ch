@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="favicone.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="./css/style.css?v=20260830-3">
-    <link rel="stylesheet" href="./css/style.css?v=20260831-3">
+    <link rel="stylesheet" href="./css/style.css?v=20260831-4">
     <!-- OneSignal のWeb Push SDK。初期化は profile.js で行います。 -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   </head>
@@ -41,6 +41,7 @@
           <button class="button button-primary" type="submit">プロフィールを保存</button>
           <p id="profile-status" class="form-status" aria-live="polite"></p>
         </form>
+        <div class="profile-header"><div class="profile-avatar"><img id="profile-avatar" hidden><span id="profile-avatar-fallback"></span></div><div class="profile-details"><div class="profile-field-heading"><h1 id="profile-name">読み込み中…</h1><button id="edit-name-button" class="profile-edit-button" type="button" hidden aria-label="ユーザー名を編集" title="ユーザー名を編集">✏️</button></div><form id="profile-name-form" class="profile-inline-form" hidden><label class="sr-only" for="profile-name-input">ユーザー名</label><input id="profile-name-input" type="text" maxlength="80" autocomplete="nickname" placeholder="ユーザー名を入力"><button class="button button-primary" type="submit">保存</button></form><p id="profile-name-status" class="form-status" aria-live="polite"></p><div class="profile-field-heading"><p id="profile-bio" class="profile-bio"></p><button id="edit-bio-button" class="profile-edit-button" type="button" hidden aria-label="自己紹介を編集" title="自己紹介を編集">✏️</button></div><form id="profile-bio-form" class="stack-form" hidden><label class="sr-only" for="profile-bio-input">自己紹介</label><textarea id="profile-bio-input" maxlength="1000" rows="5" placeholder="自己紹介を書いてみましょう"></textarea><button class="button button-primary" type="submit">保存</button></form><p id="profile-bio-status" class="form-status" aria-live="polite"></p></div></div>
       </section>
       <section aria-labelledby="profile-posts-heading"><div class="section-heading"><h2 id="profile-posts-heading">これまでの投稿</h2><p id="profile-post-count" class="muted"></p></div><div id="profile-post-list" class="profile-post-list" aria-live="polite"></div></section>
     </main>
@@ -48,6 +49,6 @@
     <!-- Theme control is loaded separately so it never depends on profile data. -->
     <script type="module" src="./js/profile-theme.js?v=20260831-1"></script>
     <script type="module" src="./js/profile.js?v=20260830-2"></script>
-    <script type="module" src="./js/profile.js?v=20260831-8"></script>
+    <script type="module" src="./js/profile.js?v=20260831-9"></script>
   </body>
 </html>
