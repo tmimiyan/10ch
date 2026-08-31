@@ -18,6 +18,8 @@ export function initAccountMenu() {
   const logoutButton = document.querySelector(".logout-button");
   if (!menu || !button || !panel || !image || !fallback || !profileLink || !loginLink || !logoutButton) return;
   const nativeDetailsMenu = menu instanceof HTMLDetailsElement;
+  const menuToggle = menu.querySelector(".account-menu-toggle");
+  const nativeCheckboxMenu = menuToggle instanceof HTMLInputElement;
 
   let stopProfileListener = null;
   const renderAvatar = (profile, user) => {
@@ -35,6 +37,10 @@ export function initAccountMenu() {
   // menu keyboard-accessible, while the short guard prevents a tap from toggling
   // the menu twice when the browser emits its following click event.
   if (nativeDetailsMenu) {
+  if (nativeCheckboxMenu) {
+    // Labels toggle their associated checkboxes natively on touch devices.
+    menuToggle.addEventListener("change", () => button.setAttribute("aria-expanded", String(menuToggle.checked)));
+  } else if (nativeDetailsMenu) {
     // <details>/<summary> provides a browser-native tap target on mobile.
     menu.addEventListener("toggle", () => button.setAttribute("aria-expanded", String(menu.open)));
   } else {
@@ -56,13 +62,17 @@ export function initAccountMenu() {
   }
   document.addEventListener("click", (event) => {
     if (menu.contains(event.target)) return;
+    if (nativeCheckboxMenu) menuToggle.checked = false;
     if (nativeDetailsMenu) menu.open = false;
+    else if (nativeDetailsMenu) menu.open = false;
     else { panel.hidden = true; button.setAttribute("aria-expanded", "false"); }
   });
   logoutButton.addEventListener("click", () => signOut(auth));
   onAuthStateChanged(auth, (user) => {
     stopProfileListener?.();
+    if (nativeCheckboxMenu) menuToggle.checked = false;
     if (nativeDetailsMenu) menu.open = false;
+    else if (nativeDetailsMenu) menu.open = false;
     else panel.hidden = true;
     if (!user) { menu.hidden = true; loginLink.hidden = false; return; }
     menu.hidden = false;
