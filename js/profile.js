@@ -4,7 +4,7 @@ import { collection, collectionGroup, doc, getDoc, getDocs, query, serverTimesta
 import { auth, db } from "./firebase.js";
 import { $, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js?v=20260831-2";
-import { initAccountMenu } from "./profile-ui.js?v=20260831-3";
+import { initAccountMenu } from "./account-menu.js?v=20260831-1";
 import { syncPublicProfile } from "./user.js?v=20260830-2";
 
 initTheme();
