@@ -6,7 +6,7 @@ import { removePostImages, uploadPostImages, validateImages } from "./media.js";
 import { $, displayName, firebaseMessage, formatDate, showToast } from "./util.js";
 import { initTheme } from "./theme.js";
 import { getFirstLoginAt, syncPublicProfile } from "./user.js?v=20260830-2";
-import { initAccountMenu } from "./profile-ui.js";
+import { initAccountMenu } from "./profile-ui.js?v=20260831-3";
 
 initTheme();
 initAccountMenu();
@@ -111,4 +111,4 @@ form.addEventListener("submit", async (event) => {
 });
 $("#search-form").addEventListener("submit", (event) => { event.preventDefault(); const keyword = $("#search-input").value; $("#clear-search").hidden = !keyword.trim(); loadThreads(keyword); });
 $("#clear-search").addEventListener("click", () => { $("#search-input").value = ""; $("#clear-search").hidden = true; loadThreads(); });
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260830-2").catch(console.warn));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20260831-1").catch(console.warn));
