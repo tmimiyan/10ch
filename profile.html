@@ -21,15 +21,14 @@
         <button class="button button-ghost notification-button" type="button" aria-label="通知を許可" title="通知を許可">通知を許可</button>
         <button class="icon-button theme-toggle" type="button" aria-label="テーマを切り替える">☾</button>
         <a class="button button-primary login-link" href="./login.html">ログイン</a>
-        <!-- Native details is reliable for both mouse clicks and mobile taps. -->
+        <!-- Checkbox + label gives mobile browsers a native tap target. -->
         <div class="account-menu" hidden>
           <button class="account-menu-button" type="button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></button>
           <div class="account-menu-panel" hidden><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
-        </div>
-        <details class="account-menu" hidden>
-          <summary class="account-menu-button" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></summary>
+          <input id="profile-account-menu-toggle" class="account-menu-toggle" type="checkbox" aria-hidden="true" tabindex="-1">
+          <label class="account-menu-button" for="profile-account-menu-toggle" aria-expanded="false"><img class="account-avatar-image" hidden><span class="account-avatar-fallback" aria-hidden="true"></span></label>
           <div class="account-menu-panel"><a class="account-profile-link" href="./profile.html">プロフィール</a><button class="logout-button" type="button">ログアウト</button></div>
-        </details>
+        </div>
       </nav>
     </header>
     <main class="container profile-page">
@@ -51,6 +50,6 @@
     <!-- Theme control is loaded separately so it never depends on profile data. -->
     <script type="module" src="./js/profile-theme.js?v=20260831-1"></script>
     <script type="module" src="./js/profile.js?v=20260830-2"></script>
-    <script type="module" src="./js/profile.js?v=20260831-3"></script>
+    <script type="module" src="./js/profile.js?v=20260831-5"></script>
   </body>
 </html>
