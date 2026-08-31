@@ -21,6 +21,7 @@ export function initAccountMenu() {
   if (!menu || !button || !panel || !image || !fallback || !profileLink || !loginLink || !logoutButton) return;
 
   const usesNativeToggle = toggle instanceof HTMLInputElement;
+  const usesInlineToggle = button.hasAttribute("data-native-menu-toggle");
   let stopProfileListener = null;
 
   const setOpen = (open) => {
@@ -41,7 +42,7 @@ export function initAccountMenu() {
 
   if (usesNativeToggle) {
     toggle.addEventListener("change", () => button.setAttribute("aria-expanded", String(toggle.checked)));
-  } else {
+  } else if (!usesInlineToggle) {
     button.addEventListener("click", (event) => {
       event.stopPropagation();
       setOpen(panel.hidden);
