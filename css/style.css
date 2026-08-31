@@ -39,3 +39,9 @@ input,textarea { width:100%; padding:11px 12px; border:1px solid var(--line); bo
 .account-menu-button { position:absolute; inset:0; border-color:transparent; background:transparent; }
 .profile-details { min-width:0; flex:1; }.profile-field-heading { display:flex; align-items:flex-start; gap:6px; }.profile-field-heading > :first-child { min-width:0; flex:1; }.profile-edit-button { flex:0 0 auto; padding:3px; border:0; background:transparent; font-size:1rem; cursor:pointer; }.profile-inline-form { display:flex; gap:8px; margin:4px 0; }.profile-inline-form[hidden] { display:none; }.profile-inline-form input { min-width:0; flex:1; }.profile-inline-form .button { flex:0 0 auto; }.profile-bio-form { margin-top:6px; }
 @media (max-width:560px) { .profile-inline-form { align-items:stretch; flex-direction:column; }.profile-inline-form .button { width:100%; } }
+
+/* The photo and its text fallback occupy one avatar slot, never two rows. */
+.profile-avatar { position:relative; }
+.profile-avatar > img,.profile-avatar > span { position:absolute; inset:0; width:100%; height:100%; }
+.profile-avatar > span { display:grid; place-items:center; }
+.profile-avatar > [hidden] { display:none !important; }
