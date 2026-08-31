@@ -33,3 +33,7 @@ input,textarea { width:100%; padding:11px 12px; border:1px solid var(--line); bo
   .profile-header h1 { font-size:clamp(1.2rem,6vw,1.55rem); line-height:1.3; }
   .profile-bio { max-width:100%; line-height:1.55; }
 }
+
+/* Overlay the transparent menu button on the avatar: one visible circle, one tap target. */
+.account-menu { width:40px; height:40px; }
+.account-menu-button { position:absolute; inset:0; border-color:transparent; background:transparent; }
